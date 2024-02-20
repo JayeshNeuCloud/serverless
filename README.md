@@ -1,50 +1,44 @@
-# Serverless Application Documentation
-This application, built with Node.js, automates the downloading of submission releases and the dispatch of related email alerts. It leverages AWS Lambda for execution, incorporating services such as Google Cloud Storage (GCS) and Mailgun for storage and email notifications, respectively.
 
-#Preparation Steps
-To deploy and operate this application, ensure you have:
+# Serverless Readme
+This Node.js application is designed to handle the download of submission releases and send corresponding email notifications. It is built to work with AWS Lambda, and it utilizes various cloud services such as Google Cloud Storage (GCS) and Mailgun.
 
-Installed Node.js and npm
-Configured AWS Lambda
-Set up a Google Cloud Storage bucket
-Obtained a Mailgun account and API key
-Created a DynamoDB table for email tracking
-Configuration and Deployment
+Prerequisites
+Before deploying and using this service, make sure you have the following prerequisites:
 
-#To set up, follow these steps:
+Node.js and npm installed
+AWS Lambda environment set up
+Google Cloud Storage bucket created
+Mailgun account and API key
+DynamoDB table for tracking email status
+Setup
+Install dependencies:
+   npm install
+Configure environment variables:
 
-Install required packages with npm install.
-Set up your environment variables by creating a .env file with:
+Create a .env file and set the following variables:
 
-makefile
-Copy code
+env
+
 MAIL_GUN_API_KEY=your_mailgun_api_key
 GCP_PRIVATE_KEY=your_base64_encoded_gcp_private_key
 GCS_BUCKET_NAME=your_gcs_bucket_name
-Deploy the function to AWS Lambda.
+Deploy the AWS Lambda function
 
-#AWS Lambda Function Implementation
-The application's core is the handler function in the index.js file, triggered by SNS events, and it:
+AWS Lambda Function The main logic is implemented in the handler function within the index.js file. This function is triggered by an SNS (Simple Notification Service) event and performs the following actions:
 
-#Downloads the release from a specified URL.
-Stores the release in Google Cloud Storage.
-Creates a signed URL for the stored object.
-Sends an email with the download information.
-Logs the email's delivery status in DynamoDB.
-A failure at any point triggers a notification email and error logging in DynamoDB.
+Downloads the submission release from a provided URL.
+Uploads the release to Google Cloud Storage.
+Generates a signed URL for the uploaded object.
+Sends a success email with download details.
+Tracks the email status in DynamoDB.
+If any step fails, the service sends a failure email and tracks the error in DynamoDB.
+Google Cloud Storage The uploadToGCS function handles the upload of submission releases to Google Cloud Storage. It uses the @google-cloud/storage library to interact with GCS.
 
-#Google Cloud Storage Integration
-The uploadToGCS function manages the storage of submission releases in GCS, using the @google-cloud/storage library for interactions.
+Mailgun The sendSuccessEmail and sendFailureEmail functions use the Mailgun API to send success and failure email notifications, respectively.
 
-#Mailgun Integration
-Email notifications for both success and failure are managed by sendSuccessEmail and sendFailureEmail functions, utilizing Mailgun's API.
+DynamoDB The trackEmail function records email status in a DynamoDB table named Csye6225_Demo_DynamoDB. The table stores information such as the email timestamp, recipient email address, and status.
 
-#DynamoDB Logging
-Email activities are tracked in a DynamoDB table named Csye6225_Demo_DynamoDB, recording details like the email's timestamp, recipient, and status.
-
-#Key Considerations
-Ensure the protection of sensitive data such as API and private keys. Tailor error management and logging to fit your needs. Conduct extensive testing of the Lambda function in a non-production setting before full deployment. Customize the code as necessary to meet your specific project needs and objectives.
-
+Additional Notes Make sure to secure sensitive information like API keys and private keys. Adjust the error handling and logging based on your requirements. Test the Lambda function thoroughly before deploying it to a production environment. Feel free to customize this code to fit your specific use case and requirements.
 
 
 # serverless  Code Debugging
