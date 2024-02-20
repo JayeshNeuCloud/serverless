@@ -1,7 +1,52 @@
-# serverless  Code
+# Serverless Application Documentation
+This application, built with Node.js, automates the downloading of submission releases and the dispatch of related email alerts. It leverages AWS Lambda for execution, incorporating services such as Google Cloud Storage (GCS) and Mailgun for storage and email notifications, respectively.
+
+Preparation Steps
+To deploy and operate this application, ensure you have:
+
+Installed Node.js and npm
+Configured AWS Lambda
+Set up a Google Cloud Storage bucket
+Obtained a Mailgun account and API key
+Created a DynamoDB table for email tracking
+Configuration and Deployment
+To set up, follow these steps:
+
+Install required packages with npm install.
+Set up your environment variables by creating a .env file with:
+
+makefile
+Copy code
+MAIL_GUN_API_KEY=your_mailgun_api_key
+GCP_PRIVATE_KEY=your_base64_encoded_gcp_private_key
+GCS_BUCKET_NAME=your_gcs_bucket_name
+Deploy the function to AWS Lambda.
+
+AWS Lambda Function Implementation
+The application's core is the handler function in the index.js file, triggered by SNS events, and it:
+
+Downloads the release from a specified URL.
+Stores the release in Google Cloud Storage.
+Creates a signed URL for the stored object.
+Sends an email with the download information.
+Logs the email's delivery status in DynamoDB.
+A failure at any point triggers a notification email and error logging in DynamoDB.
+
+Google Cloud Storage Integration
+The uploadToGCS function manages the storage of submission releases in GCS, using the @google-cloud/storage library for interactions.
+
+Mailgun Integration
+Email notifications for both success and failure are managed by sendSuccessEmail and sendFailureEmail functions, utilizing Mailgun's API.
+
+DynamoDB Logging
+Email activities are tracked in a DynamoDB table named Csye6225_Demo_DynamoDB, recording details like the email's timestamp, recipient, and status.
+
+Key Considerations
+Ensure the protection of sensitive data such as API and private keys. Tailor error management and logging to fit your needs. Conduct extensive testing of the Lambda function in a non-production setting before full deployment. Customize the code as necessary to meet your specific project needs and objectives.
 
 
 
+# serverless  Code Debugging
 'use strict';
 const { Storage } = require('@google-cloud/storage');
 const axios = require('axios');
